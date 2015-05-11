@@ -52,10 +52,6 @@ stats.domElement.style.top = '0px';
 
 document.body.appendChild( stats.domElement );
 
- var camXa= 0; 
- var camYa= 0;
- var camZa= 500; 
-
 init();
 animate();
 
@@ -73,9 +69,9 @@ var articleURL = articles[0];
 // var yCoor;
 // var zCoor;
 
-var alienX; 
-var alienY;
-var alienZ;
+// var alienX; 
+// var alienY;
+// var alienZ;
 
 var cameraPosition;
 
@@ -109,20 +105,20 @@ function makeRequest(url)
     success: function (response) {
       // The request succeeded
       //console.log(response);
-      console.log(response.results.comments);
-      console.log(response.results.comments.sentiment);
+      // console.log(response.results.comments);
+      // console.log(response.results.comments.sentiment);
       //findAlien(response);
       //var test = handleJSON(response);
 
       serverData.push(response);
-      console.log(serverData);
+      // console.log(serverData);
       //handleJSON(response);
       //call a div here and save text to a div :    
       //$(".myDiv").append(JSON.stringify(response));
     },
     error: function (xhr, status) {
       // The request failed
-        console.log(status);
+        // console.log(status);
     }
 
   });
@@ -130,16 +126,6 @@ function makeRequest(url)
 
 
 function handleJSON(filter) { 
-
-    // for (var i = 0; i < data.results.comments.length; i++) {
-  //  var str = data.results.comments[i].commentBody;
-  //  var n = str.indexOf("alien");
-  //  console.log(n);
-
-  //  if (n > -1 ) {
-  //      $(".text").append("<p>" + str + "</p>");
-  //  }
-  // }
           
 
   for (var i = 0; i < serverData.length; i++){
@@ -148,59 +134,98 @@ function handleJSON(filter) {
     
     for (var j = 0; j < data.results.comments.length; j++) {
         var APItext = data.results.comments[j].commentBody;
-    //    if (isTrimmed) {
-    //      var length = 20;
-      //  APItext = APItext.substring(0, length);
-      // }
 
       var sentimentValue = data.results.comments[j].sentiment.score;
 
-      // yCoor = 550 * sentimentValue;
-      // xCoor = 550 * sentimentValue;
-      // zCoor = 550 * sentimentValue;
 
-      var n = APItext.indexOf(filter);
-      console.log(filter);
 
-      var increase = -500;
+      //var n = APItext.indexOf(filterType);
+      // console.log(filter);
+
+      // for (var i = 0; i < data.results.comments.length; i++) {
+  //  var str = data.results.comments[i].commentBody;
+  //  var n = str.indexOf("alien");
+  //  console.log(n);
+
+  //  if (n > -1 ) {
+  //      $(".text").append("<p>" + str + "</p>");
+  //  }
+
+ var increase = -1000;
+
+        if (filter == "alien" && APItext.includes('illegal')) {
+          for (var i = 0; i < data.results.comments.length; i++) {
+            increase += 100;
+            createText(APItext, -800, increase, 500, sentimentValue/10);
+        }
+      }
+
+        if (filter == "illegal" && APItext.includes('work')) {
+          for (var i = 0; i < data.results.comments.length; i++) {
+            increase += 100;
+            createText(APItext, -2000, increase, 500, sentimentValue/10);
+        }
+      }
+
+        if (filter == "undocumented" && APItext.includes('undocumented')) {
+          for (var i = 0; i < data.results.comments.length; i++) {
+            increase += 100;
+            createText(APItext, 550, increase, 500, sentimentValue/10);
+        }
+      }
+
+        if (filter == "work" && APItext.includes('alien')) {
+         for (var i = 0; i < data.results.comments.length; i++) {
+            increase += 100;
+            createText(APItext, 2000, increase, 500, sentimentValue/10);
+        }
+     } 
+      
+
+
+      //var increase = -500;
 
         //console.log(APItext);
-        if (n > -1 ) {
-          //y is only variable bexause needs to start ... 
-          // hide/destroy current canvases before creating new ones
 
-          if (filter == "alien") {
-            for (var i = 0; i < filter.length; i++) {
-               increase += 1000;
-               objectList.push(APItext);
-               createText(APItext, -650, increase, -500 ); /// put parameter in create text 
-            }
+     //for (var k = 0; k < 50; k++) {
 
-          }
+     //  var n = APItext.indexOf("Alien");
 
-           if (filter == "illegal") {
-             for (var i = 0; i < filter.length; i++) {
-               increase += 1000;
-               objectList.push(APItext);
-               createText(APItext, -1300, increase, -500 ); /// put parameter in create text 
-            }
-          }
+        // if (n > -1 ) {
+     //      createText(APItext, 0, 0, 500 );
+     //   }
+     //  }
 
-           if (filter == "undocumented") {
-              for (var i = 0; i < filter.length; i++) {
-               increase += 1000;
-               objectList.push(APItext);
-               createText(APItext, 250, increase, -500 ); /// put parameter in create text 
-            }
-          }
+          // if (filter == "alien") {
+          //   for (var i = 0; i < 50; i++) {
+          //      increase += 1000;
+          //      createText(APItext, -650, increase, -500 ); /// put parameter in create text 
+          //   }
+          // }
 
-           if (filter == "work") {
-              for (var i = 0; i < filter.length; i++) {
-               increase += 1000;
-               objectList.push(APItext);
-               createText(APItext, 1400, increase, -500 ); /// put parameter in create text 
-            }
-          }
+          //  if (filter == "illegal") {
+          //    for (var i = 0; i < 50; i++) {
+          //      increase += 1000;
+          //     // objectList.push(APItext);
+          //      createText(APItext, -1300, increase, -500 ); /// put parameter in create text 
+          //   }
+          // }
+
+          //  if (filter == "undocumented") {
+          //     for (var i = 0; i < 50; i++) {
+          //      increase += 3000;
+          //      //objectList.push(APItext);
+          //      createText(APItext, 250, increase, -500 ); /// put parameter in create text 
+          //   }
+          // }
+
+          //  if (filter == "work") {
+          //     for (var i = 0; i < 50; i++) {
+          //      increase += 1000;
+          //      //objectList.push(APItext);
+          //      createText(APItext, 1400, increase, -500 ); /// put parameter in create text 
+          //   }
+          // }
         
           //createText(APItext, ); /// put parameter in create text 
         
@@ -208,7 +233,7 @@ function handleJSON(filter) {
 
     }
   }
-}
+//}
 
  // Sets up the scene.
   function init() {
@@ -271,8 +296,13 @@ container = document.createElement( 'div' );
     //     camera.position.y = 0;
     //     camera.position.z = 500;
 
-    camera (camXa, camYa, camZa);
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
 
+      camera.position.x = 0; 
+      camera.position.y = 0; 
+      camera.position.z = 500; 
+
+    scene.add(camera);
     // Create an event listener that resizes the renderer with the browser window.
     window.addEventListener('resize', function() {
       var WIDTH = window.innerWidth,
@@ -313,8 +343,8 @@ container = document.createElement( 'div' );
 
   var Undocumented = new THREE.Mesh( textGeom, material );
 
- Undocumented.position.x = 0;
- Undocumented.position.y = -500;
+ Undocumented.position.x = 250;
+ Undocumented.position.y = -2500;
  Undocumented.position.z = -500;
  Undocumented.name = "Undocumented";
  Undocumented.updateMatrix();
@@ -327,8 +357,8 @@ container = document.createElement( 'div' );
 
   var Work = new THREE.Mesh( textGeom1, material );
 
- Work.position.x = 1200;
- Work.position.y = -500;
+ Work.position.x = 1900;
+ Work.position.y = -2500;
  Work.position.z = -500;
  Work.name = "Work";
  Work.updateMatrix();
@@ -341,8 +371,8 @@ container = document.createElement( 'div' );
 
  var Alien = new THREE.Mesh( textGeom2, material );
 
- Alien.position.x = -900;
- Alien.position.y = -500;
+ Alien.position.x = -1000;
+ Alien.position.y = -2500;
  Alien.position.z = -500;
  Alien.name = "Alien";
  Alien.updateMatrix();
@@ -355,8 +385,8 @@ container = document.createElement( 'div' );
 
  var Illegals = new THREE.Mesh( textGeom3, material );
 
- Illegals.position.x = -1500;
- Illegals.position.y = -500;
+ Illegals.position.x = -2000;
+ Illegals.position.y = -2500;
  Illegals.position.z = -500;
  Illegals.name = "Illegal";
  Illegals.updateMatrix();
@@ -375,16 +405,19 @@ container = document.createElement( 'div' );
 
  }
 
- function camera (camX, camY, camZ)
+ function posCamera(camX, camY, camZ)
  {
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
-
       camera.position.x = camX; 
       camera.position.y = camY; 
       camera.position.z = camZ; 
+  }
 
-    scene.add(camera);
+  function lookAtCamera(x, y, z) {
 
+    console.log(camera);
+    var pos = new THREE.Vector3(x, y, z);
+    // camera.up = new THREE.Vector3(0,0,1);
+    camera.lookAt(pos);
   }
 
 
@@ -415,7 +448,7 @@ container = document.createElement( 'div' );
     console.log("Hit @ " + toString( intersects[0].point ) );
     // may throw error if undefined
     var filterText = intersects[0].object.name.toLowerCase();
-    console.log(filterText);
+    // console.log(filterText);
     // change the color of the closest face.
 
     handleJSON(filterText); 
@@ -423,10 +456,15 @@ container = document.createElement( 'div' );
   }
 
   var intersects1 = ray.intersectObjects(objectList);
+  // console.log(objectList);
 
  if ( intersects1.length > 0 ) {
  console.log("IT WORKED");
- camera (500, 0, 0);
+ var objectPos = intersects1[0].object.position;
+   console.log(intersects1);
+ posCamera (objectPos.x, objectPos.y, objectPos.z - 100);
+ lookAtCamera(objectPos.x, objectPos.y, objectPos.z);
+
   // } else {
   //  //camera (camXa, camYa, camZa);
   // camera (500, 0, 0);
@@ -458,17 +496,18 @@ function render()
 
 
 
- function createText(v, POSX, POSY, POSZ) {
+ function createText(v, POSX, POSY, POSZ, sentimentPos) {
 
    var v;
 
     // create a canvas element
     var canvas1 = document.createElement('canvas');
     canvas1.width = 500;
-    canvas1.height = 1000;
+    canvas1.height = 2000;
     var context1 = canvas1.getContext('2d');
     context1.font = 'Bold 24px Arial';
-    context1.fillStyle = 'rgba(200, 200, 200,1.0)';
+    //context1.fillStyle = 'rgba(200, 200, 200,1.0)';
+    context1.fillStyle = 'rgba(255, 200 , 255, 1.0)';
     wrapText(context1, v, 0, 70, 500, 50);
 
 
@@ -487,9 +526,11 @@ function render()
 
     mesh1.position.x = POSX; //xCoor
     mesh1.position.y = POSY; //yCoor
-    mesh1.position.z = POSZ * ( Math.random() - 0.5 ); //zCoor
+    mesh1.position.z = POSZ * (sentimentPos); //zCoor
 
 scene.add(mesh1);
+
+    objectList.push(mesh1);
 
     }
 
