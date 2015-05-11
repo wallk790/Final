@@ -21,41 +21,48 @@
 */
 
 // nytimes articles
-var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html"];
+var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html", 
+"http://www.nytimes.com/2015/04/27/opinion/parents-first-undocumented-second.html"];
 
 var articleURL = articles[0];
+for (var i = 0; i < articles.length; i++){
+	makeRequest(articles[i]);
+}
 
-$.ajax({
-	url: "http://127.0.0.1:1337/getData?url="+articleURL,
-	type: "GET",
-	crossDomain: true,
-    dataType: 'jsonp',
-	success: function (response) {
-		// The request succeeded
-		//console.log(response);
-		//console.log(response.results.comments);
-		//console.log(response.results.comments.sentiment);
-		findAlien(response);
-		handleJSON(response);
-	},
-	error: function (xhr, status) {
-		// The request failed
-    	console.log(status);
-	}
+function makeRequest(url)
+{
+	$.ajax({
+		url: "http://127.0.0.1:1337/getData?url="+url,
+		type: "GET",
+		crossDomain: true,
+	    dataType: 'jsonp',
+		success: function (response) {
+			// The request succeeded
+			//console.log(response);
+			console.log(response.results.comments);
+			console.log(response.results.comments.sentiment);
+			//findAlien(response);
+			handleJSON(response);
+		},
+		error: function (xhr, status) {
+			// The request failed
+	    	console.log(status);
+		}
 
-});
-
+	});
+}
 // handle JSON data from node backend
 function handleJSON(data) {	
 		for (var i = 0; i < data.results.comments.length; i++) {
 		$(".text").append("<p>" + data.results.comments[i].commentBody + "</p>");
-		$(".text").append("<p>" + data.results.comments.sentiment + "</p>");
+		alert ()
+		//$(".text").append("<p>" + data.results.comments.sentiment + "</p>");
 		}
 
 }
 
 //finding word alien 
-function findAlien(data) {
+// function findAlien(data) {
 
 	// for (var i = 0; i < data.results.comments.length; i++) {
 	// 	var str = data.results.comments[i].commentBody;
@@ -66,14 +73,14 @@ function findAlien(data) {
 	//  		$(".text").append("<p>" + str + "</p>");
 	// 	}
 	// }
-}
+// }
 
 
 /*
 $.getJSON('timesOut1.json', function(data) {
     // loop through each comment
  
-
+//
 			for (var i = 0; i < data.results.comments.length; i++) {
 				// get the comment body
 				var comment = data.results.comments[i].commentBody;
