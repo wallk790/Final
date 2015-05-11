@@ -139,21 +139,31 @@ function handleJSON(data) {
 }
 
 
-function drawText(inText){ 
+function drawText(inText){ //////TEXT WOULD SAVE HERE
 
-  var textGeom = new THREE.TextGeometry(inText, {
-        font: 'gentilis' 
-    });
+  // create a canvas element
+  var canvas1 = document.createElement('canvas');
+  var context1 = canvas2.getContext('2d');
+  context1.font = 'Bold 40px Arial';
+  context1.fillStyle = 'rgba(255,0,0,1.0)';
+  context1.fillText(inText);
+  // canvas contents will be used for a texture
+  var texture1 = new THREE.Texture(canvas2);
 
-    var textMesh = new THREE.Mesh( textGeom, material );
 
-    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
-  textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
-  textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
-  textMesh.updateMatrix();
-  textMesh.matrixAutoUpdate = false;
+  // var textGeom = new THREE.TextGeometry(inText, {
+ //        font: 'gentilis' 
+ //    });
 
-    scene.add( textMesh );
+ //    var textMesh = new THREE.Mesh( textGeom, material );
+
+ //    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
+  // textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
+  // textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
+  // textMesh.updateMatrix();
+  // textMesh.matrixAutoUpdate = false;
+
+ //    scene.add( textMesh );
 
 }
 
