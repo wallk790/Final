@@ -326,18 +326,26 @@ container = document.createElement( 'div' );
     });
 
     var textGeom = new THREE.TextGeometry( filterType[0], {
-        font: 'gentilis' // Must be lowercase!
+        size: 150,
+        height: 75,
+        font: 'gentilis', // Must be lowercase!
     });
 
     var textGeom1 = new THREE.TextGeometry( filterType[1], {
+      size: 150,
+        height: 75,
         font: 'gentilis' // Must be lowercase!
     });
  
   var textGeom2 = new THREE.TextGeometry( filterType[2], {
+    size: 150,
+        height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
     var textGeom3 = new THREE.TextGeometry( filterType[3], {
+      size: 150,
+        height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
@@ -346,6 +354,7 @@ container = document.createElement( 'div' );
  Undocumented.position.x = 250;
  Undocumented.position.y = -2500;
  Undocumented.position.z = -500;
+
  Undocumented.name = "Undocumented";
  Undocumented.updateMatrix();
  Undocumented.matrixAutoUpdate = false;
@@ -357,7 +366,7 @@ container = document.createElement( 'div' );
 
   var Work = new THREE.Mesh( textGeom1, material );
 
- Work.position.x = 1900;
+ Work.position.x = 2400;
  Work.position.y = -2500;
  Work.position.z = -500;
  Work.name = "Work";
@@ -385,7 +394,7 @@ container = document.createElement( 'div' );
 
  var Illegals = new THREE.Mesh( textGeom3, material );
 
- Illegals.position.x = -2000;
+ Illegals.position.x = -2800;
  Illegals.position.y = -2500;
  Illegals.position.z = -500;
  Illegals.name = "Illegal";
@@ -503,7 +512,7 @@ function render()
     // create a canvas element
     var canvas1 = document.createElement('canvas');
     canvas1.width = 500;
-    canvas1.height = 2000;
+    canvas1.height = 1500;
     var context1 = canvas1.getContext('2d');
     context1.font = 'Bold 24px Arial';
     //context1.fillStyle = 'rgba(200, 200, 200,1.0)';
@@ -554,7 +563,7 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
   }
   }
   context.fillText(line, x, y);
-}//
+}
 
 
 </script>
