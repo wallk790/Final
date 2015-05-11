@@ -1,44 +1,105 @@
 <html>
 <head>
 
+  <style type="text/css">
+
+  APItext {
+
+    width: 100px;
+  }
+  </style>
+
 </head> 
 
 <body>
 
 <div class="text"> </div>
 
-<!-- put script here to call to library -->
+<script src="js/three.min.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/GeometryUtils.js"></script>
 
-<script src="js/three.min.js/build/three.min.js"></script>
-<script src="js/three.min.js/examples/js/controls/OrbitControls.js"></script>
+  <!-- load the font files -->
+
+    <script src="fonts/gentilis_bold.typeface.js"></script>
+    <script src="fonts/gentilis_regular.typeface.js"></script>
 
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<!-- put script here to call to library -->
 
 <script>
 
 /*
-	To get backend running: 
-	1. Open Terminal.
-	2. "cd" to the directory with your node app.
-	3. run "node app.js"
+  To get backend running: 
+  1. Open Terminal.
+  2. "cd" to the directory with your node app.
+  3. run "node app.js"
 */
 
-//////3D 
-  // Set up the scene, camera, and renderer as global variables.
-  var scene, camera, renderer;
- 
-  init();
-  animate();
+var scene, camera, renderer;
+
+var group, textMesh1, textMesh2, textGeo, material;
+
+
+
+// nytimes articles
+var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html", 
+"http://www.nytimes.com/2015/04/27/opinion/parents-first-undocumented-second.html"];
+
+var articleURL = articles[0];
+for (var i = 0; i < articles.length; i++){
+  makeRequest(articles[i]);
+}
+
+function makeRequest(url)
+{
+  $.ajax({
+    url: "http://127.0.0.1:1337/getData?url="+url,
+    type: "GET",
+    crossDomain: true,
+      dataType: 'jsonp',
+    success: function (response) {
+      // The request succeeded
+      //console.log(response);
+      console.log(response.results.comments);
+      console.log(response.results.comments.sentiment);
+      //findAlien(response);
+      handleJSON(response);
+    },
+    error: function (xhr, status) {
+      // The request failed
+        console.log(status);
+    }
+
+  });
+}
+// handle JSON data from node backend
+// function handleJSON(data) {  
+//    for (var i = 0; i < data.results.comments.length; i++) {
+//    $(".text").append("<p>" + data.results.comments[i].commentBody + "</p>");
+//    //$(".text").append("<p>" + data.results.comments.sentiment + "</p>");
+//    }
+// }
+
+function handleJSON(data) { 
+    var APItext = data.results.comments[i].commentBody 
+
+init();
+animate();
 
   // Sets up the scene.
   function init() {
+
+
+    container = document.createElement( 'div' );
+  document.body.appendChild( container );
  
     // Create the scene and set the scene size.
     scene = new THREE.Scene();
     var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight;
 
-        // Create a renderer and add it to the DOM.
+ // Create a renderer and add it to the DOM.
     renderer = new THREE.WebGLRenderer({antialias:true});
     renderer.setSize(WIDTH, HEIGHT);
     document.body.appendChild(renderer.domElement);
@@ -48,16 +109,40 @@
     camera.position.set(0,6,0);
     scene.add(camera);
 
-        // Create an event listener that resizes the renderer with the browser window.
+
+    var material = new THREE.MeshPhongMaterial({
+        color: 0xdddddd
+    });
+
+    
+var textGeom = new THREE.TextGeometry( APItext, {
+        font: 'gentilis' // Must be lowercase!
+    });
+
+    for ( var i = 0; i < 10; i ++ ) {
+
+    var textMesh = new THREE.Mesh( textGeom, material );
+
+    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
+  textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
+  textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
+  textMesh.updateMatrix();
+  textMesh.matrixAutoUpdate = false;
+
+    scene.add( textMesh );
+
+}
+
+    // Create an event listener that resizes the renderer with the browser window.
     window.addEventListener('resize', function() {
-    var WIDTH = window.innerWidth,
-        HEIGHT = window.innerHeight;
+      var WIDTH = window.innerWidth,
+          HEIGHT = window.innerHeight;
       renderer.setSize(WIDTH, HEIGHT);
       camera.aspect = WIDTH / HEIGHT;
       camera.updateProjectionMatrix();
     });
 
-	// Set the background color of the scene.
+     // Set the background color of the scene.
     renderer.setClearColorHex(0x333F47, 1);
  
     // Create a light, set its position, and add it to the scene.
@@ -65,83 +150,35 @@
     light.position.set(-100,200,100);
     scene.add(light);
 
-     // Load in the mesh and add it to the scene.
-    var loader = new THREE.JSONLoader();
-    loader.load( "models/treehouse_logo.js", function(geometry){
-      var material = new THREE.MeshLambertMaterial({color: 0x55B663});
-      mesh = new THREE.Mesh(geometry, material);
-      scene.add(mesh);
-    });
-
-
-       // Add OrbitControls so that we can pan around with the mouse.
+ // Add OrbitControls so that we can pan around with the mouse.
     controls = new THREE.OrbitControls(camera, renderer.domElement);
-
-     }
  
+  }
+}
+
   // Renders the scene and updates the render as needed.
   function animate() {
- 
-    // Read more about requestAnimationFrame at http://www.paulirish.com/2011/requestanimationframe-for-smart-animating/
+
     requestAnimationFrame(animate);
  
     // Render the scene.
     renderer.render(scene, camera);
     controls.update();
-}
+  }
 
-// nytimes articles
-var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html", 
-"http://www.nytimes.com/2015/04/27/opinion/parents-first-undocumented-second.html"];
-
-var articleURL = articles[0];
-for (var i = 0; i < articles.length; i++){
-	makeRequest(articles[i]);
-}
-
-function makeRequest(url)
-{
-	$.ajax({
-		url: "http://127.0.0.1:1337/getData?url="+url,
-		type: "GET",
-		crossDomain: true,
-	    dataType: 'jsonp',
-		success: function (response) {
-			// The request succeeded
-			//console.log(response);
-			console.log(response.results.comments);
-			console.log(response.results.comments.sentiment);
-			//findAlien(response);
-			handleJSON(response);
-		},
-		error: function (xhr, status) {
-			// The request failed
-	    	console.log(status);
-		}
-
-	});
-}
-// handle JSON data from node backend
-function handleJSON(data) {	
-		for (var i = 0; i < data.results.comments.length; i++) {
-		$(".text").append("<p>" + data.results.comments[i].commentBody + "</p>");
-		//$(".text").append("<p>" + data.results.comments.sentiment + "</p>");
-		}
-
-}
 
 //finding word alien 
 // function findAlien(data) {
 
-	// for (var i = 0; i < data.results.comments.length; i++) {
-	// 	var str = data.results.comments[i].commentBody;
-	// 	var n = str.indexOf("alien");
-	// 	console.log(n);
+  // for (var i = 0; i < data.results.comments.length; i++) {
+  //  var str = data.results.comments[i].commentBody;
+  //  var n = str.indexOf("alien");
+  //  console.log(n);
 
-	// 	if (n > -1 ) {
-	//  		$(".text").append("<p>" + str + "</p>");
-	// 	}
-	// }
+  //  if (n > -1 ) {
+  //      $(".text").append("<p>" + str + "</p>");
+  //  }
+  // }
 // }
 
 
@@ -150,22 +187,22 @@ $.getJSON('timesOut1.json', function(data) {
     // loop through each comment
  
 
-			for (var i = 0; i < data.results.comments.length; i++) {
-				// get the comment body
-				var comment = data.results.comments[i].commentBody;
-				console.log(comment);	
+      for (var i = 0; i < data.results.comments.length; i++) {
+        // get the comment body
+        var comment = data.results.comments[i].commentBody;
+        console.log(comment); 
 
-			}
+      }
 
-						var container = document.querySelector('text');
+            var container = document.querySelector('text');
 
-			var paragraph = document.createElement('p');
-			paragraph.setAttribute("class", "text");
-			paragraph.innerHTML = "these are comments" + comment;
+      var paragraph = document.createElement('p');
+      paragraph.setAttribute("class", "text");
+      paragraph.innerHTML = "these are comments" + comment;
 
-			paragraph.appendChild(container);
-				
-				// do sentiment analysis
+      paragraph.appendChild(container);
+        
+        // do sentiment analysis
 });
 */
 
