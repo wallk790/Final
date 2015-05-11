@@ -1,14 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>D3 Test</title>
-		<script type="text/javascript" src="d3.js"></script>
-		<style type="text/css">
-			/* No style rules here yet */		
-		</style>
-	</head>
-	<body>
-		<script type="text/javascript" src="js/main.js"> </script>
-	</body>
+<html>
+<head>
+
+</head>
+<body>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script>
+	// example url 
+	// UNTESTED Sentiment example https://github.com/thisandagain/sentiment
+	// 5a201de4998d3b4049fd577cce90db66:1:71926099
+	var baseurl = "http://api.nytimes.com/svc/community/v3/user-content/url.json?api-key="
+	var apikey  = "5a201de4998d3b4049fd577cce90db66:1:71926099";
+	var articleurl = "http://www.nytimes.com/2015/03/18/opinion/a-way-out-on-immigration-reform.html";
+	var apiurl = baseurl + apikey + "&url=" + articleurl;
+	console.log(apiurl);
+	// get json
+	//var json = gotSomeJSONFromSomewhere; // do ajax request here or load json locally
+
+	function( data ) { ///use xml httprequest 
+		console.log(data);
+		// loop through each comment`
+		for (var i = 0; i < data.results.comments.length; i++) {
+			// get the comment body
+			var comment = data.results.comments[i].commentBody;
+			console.log(comment);	
+			// do sentiment analysis
+
+		}
+	});
+
+//put this in another function and call it where you had your jQuery
+//the asycononous part being false lets this load in the background so it doens't stop your program
+
+var oReq = new XMLHttpRequest();
+oReq.onload = reqListener;
+oReq.open("get", apiurl, true);
+oReq.send();
+
+	//
+
+	// // node code 
+	// var sentiment = require('sentiment');
+
+	// var r1 = sentiment(firstComment);
+
+	// if ( r1 > 0 ) {
+	// 	console.log("Good");
+	// }
+	// else {
+	// 	console.log("Bad");	
+	// }
+	// console.dir(r1);        // Score: -2, Comparative: -0.666
+
+	// var r2 = sentiment('Cats are totally amazing!');
+	// console.dir(r2);        // Score: 4, Comparative: 1
+</script>
+
+</body>
 </html>
