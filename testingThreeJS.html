@@ -6,13 +6,6 @@
 
 <style>
 
-close {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-
-}
-
 </style>
 
 </head>
@@ -39,26 +32,14 @@ close {
   var group, textMesh1, textMesh2, textGeo, material;
 
 
+// custom global variables
+var targetList = [];
+var projector, mouse = { x: 0, y: 0 };
+
   init();
   animate();
   //createText();
-  mainText();
-  //onDocumentMouseMove();
 
-
-
-function mainText(){
-
-var words = '<div class=\"header\"<a id=\"close\" href="#">close<a/></div>';
-
- var startingPoint = document.createElement('div');
- startingPoint.innerHTML = words;
- document.body.appendChild(startingPoint);
-
- var elClose = document.getElementById('close'); 
- elClose.addEventListener('click', createText, false);
-
-}
 
 
   // Sets up the scene.
@@ -72,14 +53,73 @@ var words = '<div class=\"header\"<a id=\"close\" href="#">close<a/></div>';
     var WIDTH = window.innerWidth,
         HEIGHT = window.innerHeight;
 
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2( 0xcccccc, 0.000001 );
+
+//     light = new THREE.DirectionalLight( 0xffffff );
+//     light.position.set( 1, 1, 1 );
+//     scene.add( light );
+
+//     light = new THREE.DirectionalLight( 0x002288 );
+//     light.position.set( -1, -1, -1 );
+//     scene.add( light );
+
+//     light = new THREE.AmbientLight( 0x222222 );
+//     scene.add( light );
+
+//     var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+// scene.add( light );
+
+// LIGHTS
+
+        hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+        hemiLight.color.setHSL( 0.6, 1, 0.6 );
+        hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
+        hemiLight.position.set( 0, 500, 0 );
+        scene.add( hemiLight );
+
+        //
+
+        dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+        dirLight.color.setHSL( 0.1, 1, 0.95 );
+        dirLight.position.set( -1, 1.75, 1 );
+        dirLight.position.multiplyScalar( 50 );
+        scene.add( dirLight );
+
+        dirLight.castShadow = true;
+
+        dirLight.shadowMapWidth = 2048;
+        dirLight.shadowMapHeight = 2048;
+
+        var d = 50;
+
+        dirLight.shadowCameraLeft = -d;
+        dirLight.shadowCameraRight = d;
+        dirLight.shadowCameraTop = d;
+        dirLight.shadowCameraBottom = -d;
+
+        dirLight.shadowCameraFar = 3500;
+        dirLight.shadowBias = -0.0001;
+        dirLight.shadowDarkness = 0.35;
+        //dirLight.shadowCameraVisible = true;  
+
+
+
  // Create a renderer and add it to the DOM.
-    renderer = new THREE.WebGLRenderer({antialias:true});
+
+     renderer = new THREE.WebGLRenderer({antialias:true});
+    //var renderer = new THREE.WebGLRenderer( { alpha: true } );
     renderer.setSize(WIDTH, HEIGHT);
     document.body.appendChild(renderer.domElement);
+    renderer.setClearColor( scene.fog.color );
 
     // Create a camera, zoom it out from the model a bit, and add it to the scene.
-    camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000);
-    camera.position.set(0,6,0);
+   // camera = new THREE.PerspectiveCamera(45, WIDTH / HEIGHT, 0.1, 20000); // VIEW_ANGLE, ASPECT,NEAR, FAR
+    //camera.position.z = 10;
+
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
+        camera.position.z = 500;
+
     scene.add(camera);
 
 
@@ -95,55 +135,204 @@ var words = '<div class=\"header\"<a id=\"close\" href="#">close<a/></div>';
      // Set the background color of the scene.
     renderer.setClearColorHex(0x333F47, 1);
  
-    // Create a light, set its position, and add it to the scene.
-    var light = new THREE.PointLight(0xffffff);
-    light.position.set(-100,200,100);
-    scene.add(light);
+    // // Create a light, set its position, and add it to the scene.
+    // var light = new THREE.PointLight(0xffffff);
+    // light.position.set(-100,200,100);
+    // scene.add(light);
 
  // Add OrbitControls so that we can pan around with the mouse.
     controls = new THREE.OrbitControls(camera, renderer.domElement);
- 
-  }
 
-  // Renders the scene and updates the render as needed.
-  function animate() {
+    //////////////////////////////////////////////////////////////////////
 
-    requestAnimationFrame(animate);
- 
-    // Render the scene.
-    renderer.render(scene, camera);
-    controls.update();
-  }
-
- function createText(v) {
-
-
-  var material = new THREE.MeshPhongMaterial({
+  // this material causes a mesh to use colors assigned to faces
+ var material = new THREE.MeshPhongMaterial({
         color: 0xdddddd
-});
+    });
 
-    var textGeom = new THREE.TextGeometry( 'Hello World!', {
+    var textGeom = new THREE.TextGeometry( 'Click', {
         font: 'gentilis' // Must be lowercase!
     });
 
-    for ( var i = 0; i < 150; i ++ ) {
 
-    var textMesh = new THREE.Mesh( textGeom, material );
+  var Click = new THREE.Mesh( textGeom, material );
 
-    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
-  textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
-  textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
-  textMesh.updateMatrix();
-  textMesh.matrixAutoUpdate = false;
+ Click.position.x = 0;
+ Click.position.y = 0;
+ Click.position.z = 0;
+ Click.updateMatrix();
+ Click.matrixAutoUpdate = false;
 
-    scene.add( textMesh );
-  }
+    scene.add( Click );
+  
+  targetList.push(Click);
+
+  //////////////////////////////////////////////////////////////////////
+  
+  // initialize object to perform world/screen calculations
+  projector = new THREE.Projector();
+  
+  // when the mouse moves, call the given function
+  document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+  
  
+  }
+
+  function onDocumentMouseDown( event ) 
+{
+  // the following line would stop any other event handler from firing
+  // (such as the mouse's TrackballControls)
+  // event.preventDefault();
+  
+  console.log("Click.");
+  
+  // update the mouse variable
+  mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+  mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+  
+  // find intersections
+
+  // create a Ray with origin at the mouse position
+  //   and direction into the scene (camera direction)
+  var vector = new THREE.Vector3( mouse.x, mouse.y, 1 );
+  projector.unprojectVector( vector, camera );
+  var ray = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
+
+  // create an array containing all objects in the scene with which the ray intersects
+  var intersects = ray.intersectObjects( targetList );
+  
+  // if there is one (or more) intersections
+  if ( intersects.length > 0 )
+  {
+    console.log("Hit @ " + toString( intersects[0].point ) );
+    // change the color of the closest face.
+    createText(); 
+  }
+
+}
+
+
+function toString(v) { return "[ " + v.x + ", " + v.y + ", " + v.z + " ]"; }
+
+function animate() 
+{
+  requestAnimationFrame( animate );
+  render();   
+  update();
+}
+
+function update()
+{
+  
+  controls.update();
+}
+
+function render() 
+{
+  renderer.render( scene, camera );
+}
+
+
+  // // Renders the scene and updates the render as needed.
+  // function animate() {
+
+  //   requestAnimationFrame(animate);
+ 
+  //   // Render the scene.
+  //   renderer.render(scene, camera);
+  //   controls.update();
+  // }
+
+ function createText(v) {
+  var text = "Hello World! Hello World! alien! \ Hello World! Hello World!";
+  for ( var i = 0; i < 150; i ++ ) {
+    // create a canvas element 
+    wrapText(context1, text, 0, 70, 200, 100);
+
+
+    context1.fillText("Hello World! Hello World! alien! \ Hello World! Hello World!", 0, 70);
+    // canvas contents will be used for a texture
+    var texture1 = new THREE.Texture(canvas1);
+    texture1.needsUpdate = true;
+
+    var material1 = new THREE.MeshBasicMaterial( {map: texture1, side: THREE.DoubleSide } );
+    material1.transparent = true;
+
+    var mesh1 = new THREE.Mesh(
+        new THREE.PlaneGeometry(canvas1.width, canvas1.height),
+        material1
+      );
+
+    mesh1.position.x = ( Math.random() - 0.5 ) * 20000;
+    mesh1.position.y = ( Math.random() - 0.5 ) * 20000;
+    mesh1.position.z = ( Math.random() - 0.5 ) * 20000;
+
+    scene.add(mesh1);
+  }
+
+  console.log(scene);
+ //  var material = new THREE.MeshPhongMaterial({
+ //        //color: 0xdddddd
+
+ //        color: 0x00000A
+ //    });
+
+ //    var textGeom = new THREE.TextGeometry( "Hello World! Hello World! alien! \ Hello World! Hello World!", {
+ //        font: 'gentilis' // Must be lowercase!
+ //    });
+
+ //  //   var n = textGeom.indexOf("alien");
+
+ //  // if (n > -1 ) {
+ //  //      $(".text").append("<p>" + textGeom + "</p>");
+ //  // }
+
+ //      // for (var i = 0; i < data.results.comments.length; i++) {
+ //  //  var str = data.results.comments[i].commentBody;
+ //  //  var n = str.indexOf("alien");
+ //  //  console.log(n);
+
+ //  //  if (n > -1 ) {
+ //  //      $(".text").append("<p>" + str + "</p>");
+ //  //  }
+ //  // }
+
+ //    for ( var i = 0; i < 150; i ++ ) {
+
+ //    var textMesh = new THREE.Mesh( textGeom, material );
+
+ //  textMesh.position.x = ( Math.random() - 0.5 ) * 20000;
+  // textMesh.position.y = ( Math.random() - 0.5 ) * 20000;
+  // textMesh.position.z = ( Math.random() - 0.5 ) * 20000;
+  // textMesh.updateMatrix();
+  // textMesh.matrixAutoUpdate = false;
+
+ //    scene.add( textMesh );
+ //  }
+ 
+}
+
+function wrapText(context, text, x, y, maxWidth, lineHeight) {
+  var words = text.split(' ');
+  var line = '';
+  for(var n = 0; n < words.length; n++) {
+  var testLine = line + words[n] + ' ';
+  var metrics = context.measureText(testLine);
+  var testWidth = metrics.width;
+  if (testWidth > maxWidth && n > 0) {
+  context.fillText(line, x, y);
+  line = words[n] + ' ';
+  y += lineHeight;
+  }
+  else {
+  line = testLine;
+  }
+  }
+  context.fillText(line, x, y);
 }
 
 
 
- 
  </script>
  
 </body>
