@@ -1,50 +1,218 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <title>Figuring out text</title>
-  <meta charset="utf-8">
+  <style type="text/css">
 
-<style>
+  </style>
 
-</style>
+</head> 
 
-</head>
 <body style="margin: 0;">
- 
-  <script src="js/three.min.js"></script>
-  <script src="js/OrbitControls.js"></script>
-  <script src="js/GeometryUtils.js"></script>
+
+
+<!-- <div class="JSONinfo"> </div> -->
+
+<script src="js/three.min.js"></script>
+<script src="js/OrbitControls.js"></script>
+<script src="js/GeometryUtils.js"></script>
+<script src="js/Stats.js"></script>
 
   <!-- load the font files -->
 
     <script src="fonts/gentilis_bold.typeface.js"></script>
     <script src="fonts/gentilis_regular.typeface.js"></script>
 
-    <script src="js/Detector.js"></script>
-  
-<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="js/Detector.js"></script>
 
-  <script>
-  // Set up the scene, camera, and renderer as global variables.
-  var scene, camera, renderer;
+<script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+<!-- put script here to call to library -->
 
-  var group, textMesh1, textMesh2, textGeo, material;
+<script>
 
+var scene, camera, renderer;
+
+var group, textMesh1, textMesh2, textGeo, material;
 
 // custom global variables
 var targetList = [];
+var objectList = [];
 var projector, mouse = { x: 0, y: 0 };
 
-  init();
-  animate();
-  //createText();
+var stats = new Stats();
+
+var serverData = [];
+
+var filterType = ["Undocumented","Alien","Illegal","Work"];
+stats.setMode(0); // 0: fps, 1: ms
+
+// align top-left
+stats.domElement.style.position = 'absolute';
+stats.domElement.style.left = '0px';
+stats.domElement.style.top = '0px';
+
+document.body.appendChild( stats.domElement );
+
+ var camXa= 0; 
+ var camYa= 0;
+ var camZa= 500; 
+
+init();
+animate();
+
+
+// nytimes articles
+var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html", 
+"http://www.nytimes.com/2015/04/27/opinion/parents-first-undocumented-second.html"];
+
+// Debug stuffs
+var isTrimmed = true;
+
+var articleURL = articles[0];
+
+// var xCoor; 
+// var yCoor;
+// var zCoor;
+
+var alienX; 
+var alienY;
+var alienZ;
+
+var cameraPosition;
+
+
+// var illegalX = 900; 
+// var illegalY = 0;
+// var illegalZ = 500;
+
+
+// var workX = 1000; 
+// var workY = 0;
+// var workZ = -500;
+
+// var undocumentedX = -900; 
+// var undocumentedY = 0;
+// var undocumentedZ = -500;
 
 
 
-  // Sets up the scene.
+for (var i = 0; i < articles.length; i++){
+  makeRequest(articles[i]);
+}
+
+function makeRequest(url)
+{
+  $.ajax({
+    url: "http://127.0.0.1:1337/getData?url="+url,
+    type: "GET",
+    crossDomain: true,
+      dataType: 'jsonp',///was suggested to save as text so it's not already parsed ------ doesn't work becuase jsonp allows for cross domain requests which I need when working with node.js
+    success: function (response) {
+      // The request succeeded
+      //console.log(response);
+      console.log(response.results.comments);
+      console.log(response.results.comments.sentiment);
+      //findAlien(response);
+      //var test = handleJSON(response);
+
+      serverData.push(response);
+      console.log(serverData);
+      //handleJSON(response);
+      //call a div here and save text to a div :    
+      //$(".myDiv").append(JSON.stringify(response));
+    },
+    error: function (xhr, status) {
+      // The request failed
+        console.log(status);
+    }
+
+  });
+}
+
+
+function handleJSON(filter) { 
+
+    // for (var i = 0; i < data.results.comments.length; i++) {
+  //  var str = data.results.comments[i].commentBody;
+  //  var n = str.indexOf("alien");
+  //  console.log(n);
+
+  //  if (n > -1 ) {
+  //      $(".text").append("<p>" + str + "</p>");
+  //  }
+  // }
+          
+
+  for (var i = 0; i < serverData.length; i++){
+    // the json for an individual article
+    var data = serverData[i];
+    
+    for (var j = 0; j < data.results.comments.length; j++) {
+        var APItext = data.results.comments[j].commentBody;
+    //    if (isTrimmed) {
+    //      var length = 20;
+      //  APItext = APItext.substring(0, length);
+      // }
+
+      var sentimentValue = data.results.comments[j].sentiment.score;
+
+      // yCoor = 550 * sentimentValue;
+      // xCoor = 550 * sentimentValue;
+      // zCoor = 550 * sentimentValue;
+
+      var n = APItext.indexOf(filter);
+      console.log(filter);
+
+      var increase = -500;
+
+        //console.log(APItext);
+        if (n > -1 ) {
+          //y is only variable bexause needs to start ... 
+          // hide/destroy current canvases before creating new ones
+
+          if (filter == "alien") {
+            for (var i = 0; i < filter.length; i++) {
+               increase += 1000;
+               objectList.push(APItext);
+               createText(APItext, -650, increase, -500 ); /// put parameter in create text 
+            }
+
+          }
+
+           if (filter == "illegal") {
+             for (var i = 0; i < filter.length; i++) {
+               increase += 1000;
+               objectList.push(APItext);
+               createText(APItext, -1300, increase, -500 ); /// put parameter in create text 
+            }
+          }
+
+           if (filter == "undocumented") {
+              for (var i = 0; i < filter.length; i++) {
+               increase += 1000;
+               objectList.push(APItext);
+               createText(APItext, 250, increase, -500 ); /// put parameter in create text 
+            }
+          }
+
+           if (filter == "work") {
+              for (var i = 0; i < filter.length; i++) {
+               increase += 1000;
+               objectList.push(APItext);
+               createText(APItext, 1400, increase, -500 ); /// put parameter in create text 
+            }
+          }
+        
+          //createText(APItext, ); /// put parameter in create text 
+        
+      }
+
+    }
+  }
+}
+
+ // Sets up the scene.
   function init() {
-
-    container = document.createElement( 'div' );
+container = document.createElement( 'div' );
   document.body.appendChild( container );
  
     // Create the scene and set the scene size.
@@ -55,23 +223,9 @@ var projector, mouse = { x: 0, y: 0 };
     scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2( 0xcccccc, 0.000001 );
 
-//     light = new THREE.DirectionalLight( 0xffffff );
-//     light.position.set( 1, 1, 1 );
-//     scene.add( light );
-
-//     light = new THREE.DirectionalLight( 0x002288 );
-//     light.position.set( -1, -1, -1 );
-//     scene.add( light );
-
-//     light = new THREE.AmbientLight( 0x222222 );
-//     scene.add( light );
-
-//     var light = new THREE.AmbientLight( 0x404040 ); // soft white light
-// scene.add( light );
-
 // LIGHTS
 
-        hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 0.6 );
+        hemiLight = new THREE.HemisphereLight( 0xffffff, 0xffffff, 1 );
         hemiLight.color.setHSL( 0.6, 1, 0.6 );
         hemiLight.groundColor.setHSL( 0.095, 1, 0.75 );
         hemiLight.position.set( 0, 500, 0 );
@@ -102,20 +256,22 @@ var projector, mouse = { x: 0, y: 0 };
         dirLight.shadowDarkness = 0.35;
         //dirLight.shadowCameraVisible = true;  
 
-
+  
 
  // Create a renderer and add it to the DOM.
-
      renderer = new THREE.WebGLRenderer({antialias:true});
     //var renderer = new THREE.WebGLRenderer( { alpha: true } );
     renderer.setSize(WIDTH, HEIGHT);
     document.body.appendChild(renderer.domElement);
     renderer.setClearColor( scene.fog.color );
 
-    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
-        camera.position.z = 500;
 
-    scene.add(camera);
+    // camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
+    //     camera.position.x = 0;
+    //     camera.position.y = 0;
+    //     camera.position.z = 500;
+
+    camera (camXa, camYa, camZa);
 
     // Create an event listener that resizes the renderer with the browser window.
     window.addEventListener('resize', function() {
@@ -129,11 +285,6 @@ var projector, mouse = { x: 0, y: 0 };
      // Set the background color of the scene.
     renderer.setClearColorHex(0x333F47, 1);
  
-    // Create a light, set its position, and add it to the scene.
-    var light = new THREE.PointLight(0xffffff);
-    light.position.set(-100,200,100);
-    scene.add(light);
-
  // Add OrbitControls so that we can pan around with the mouse.
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
@@ -144,23 +295,76 @@ var projector, mouse = { x: 0, y: 0 };
         color: 0xdddddd
     });
 
-    var textGeom = new THREE.TextGeometry( 'Click', {
+    var textGeom = new THREE.TextGeometry( filterType[0], {
         font: 'gentilis' // Must be lowercase!
     });
 
+    var textGeom1 = new THREE.TextGeometry( filterType[1], {
+        font: 'gentilis' // Must be lowercase!
+    });
+ 
+  var textGeom2 = new THREE.TextGeometry( filterType[2], {
+        font: 'gentilis' // Must be lowercase!
+    });
 
-  var Click = new THREE.Mesh( textGeom, material );
+    var textGeom3 = new THREE.TextGeometry( filterType[3], {
+        font: 'gentilis' // Must be lowercase!
+    });
 
- Click.position.x = 0;
- Click.position.y = 0;
- Click.position.z = 0;
- Click.updateMatrix();
- Click.matrixAutoUpdate = false;
+  var Undocumented = new THREE.Mesh( textGeom, material );
 
-    scene.add( Click );
+ Undocumented.position.x = 0;
+ Undocumented.position.y = -500;
+ Undocumented.position.z = -500;
+ Undocumented.name = "Undocumented";
+ Undocumented.updateMatrix();
+ Undocumented.matrixAutoUpdate = false;
+
+    scene.add(Undocumented );
   
-  targetList.push(Click);
+  targetList.push(Undocumented);
 
+
+  var Work = new THREE.Mesh( textGeom1, material );
+
+ Work.position.x = 1200;
+ Work.position.y = -500;
+ Work.position.z = -500;
+ Work.name = "Work";
+ Work.updateMatrix();
+ Work.matrixAutoUpdate = false;
+
+    scene.add(Work);
+  
+  targetList.push(Work);
+
+
+ var Alien = new THREE.Mesh( textGeom2, material );
+
+ Alien.position.x = -900;
+ Alien.position.y = -500;
+ Alien.position.z = -500;
+ Alien.name = "Alien";
+ Alien.updateMatrix();
+ Alien.matrixAutoUpdate = false;
+
+    scene.add(Alien);
+  
+  targetList.push(Alien);
+
+
+ var Illegals = new THREE.Mesh( textGeom3, material );
+
+ Illegals.position.x = -1500;
+ Illegals.position.y = -500;
+ Illegals.position.z = -500;
+ Illegals.name = "Illegal";
+ Illegals.updateMatrix();
+ Illegals.matrixAutoUpdate = false;
+
+    scene.add(Illegals);
+  
+  targetList.push(Illegals);
   //////////////////////////////////////////////////////////////////////
   
   // initialize object to perform world/screen calculations
@@ -168,15 +372,24 @@ var projector, mouse = { x: 0, y: 0 };
   
   // when the mouse moves, call the given function
   document.addEventListener( 'mousedown', onDocumentMouseDown, false );
-  
- 
+
+ }
+
+ function camera (camX, camY, camZ)
+ {
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
+
+      camera.position.x = camX; 
+      camera.position.y = camY; 
+      camera.position.z = camZ; 
+
+    scene.add(camera);
+
   }
+
 
   function onDocumentMouseDown( event ) 
 {
-  // the following line would stop any other event handler from firing
-  // (such as the mouse's TrackballControls)
-  // event.preventDefault();
   
   console.log("Click.");
   
@@ -198,15 +411,32 @@ var projector, mouse = { x: 0, y: 0 };
   // if there is one (or more) intersections
   if ( intersects.length > 0 )
   {
+    console.log(intersects);
     console.log("Hit @ " + toString( intersects[0].point ) );
+    // may throw error if undefined
+    var filterText = intersects[0].object.name.toLowerCase();
+    console.log(filterText);
     // change the color of the closest face.
-    createText(); 
+
+    handleJSON(filterText); 
+
   }
 
+  var intersects1 = ray.intersectObjects(objectList);
+
+ if ( intersects1.length > 0 ) {
+ console.log("IT WORKED");
+ camera (500, 0, 0);
+  // } else {
+  //  //camera (camXa, camYa, camZa);
+  // camera (500, 0, 0);
+
+   }
 }
 
 
 function toString(v) { return "[ " + v.x + ", " + v.y + ", " + v.z + " ]"; }
+
 
 function animate() 
 {
@@ -227,31 +457,22 @@ function render()
 }
 
 
-  // // Renders the scene and updates the render as needed.
-  // function animate() {
 
-  //   requestAnimationFrame(animate);
- 
-  //   // Render the scene.
-  //   renderer.render(scene, camera);
-  //   controls.update();
-  // }
+ function createText(v, POSX, POSY, POSZ) {
 
- function createText(v) {
+   var v;
 
-var text = "Hello World! Hello World! alien! \ Hello World! Hello World!";
-  for ( var i = 0; i < 150; i ++ ) {
     // create a canvas element
     var canvas1 = document.createElement('canvas');
     canvas1.width = 500;
-    canvas1.height = 500;
+    canvas1.height = 1000;
     var context1 = canvas1.getContext('2d');
-    context1.font = 'Bold 50px Arial';
-    context1.fillStyle = 'rgba(255,255,255,1.0)';
-    wrapText(context1, text, 0, 70, 500, 100);
+    context1.font = 'Bold 24px Arial';
+    context1.fillStyle = 'rgba(200, 200, 200,1.0)';
+    wrapText(context1, v, 0, 70, 500, 50);
 
 
-    context1.fillText("Hello World! Hello World! alien! \ Hello World! Hello World!", 0, 70);
+    context1.fillText(v, 0, 70);
     // canvas contents will be used for a texture
     var texture1 = new THREE.Texture(canvas1);
     texture1.needsUpdate = true;
@@ -264,14 +485,16 @@ var text = "Hello World! Hello World! alien! \ Hello World! Hello World!";
         material1
       );
 
-    mesh1.position.x = ( Math.random() - 0.5 ) * 2000;
-    mesh1.position.y = ( Math.random() - 0.5 ) * 2000;
-    mesh1.position.z = ( Math.random() - 0.5 ) * 2000;
+    mesh1.position.x = POSX; //xCoor
+    mesh1.position.y = POSY; //yCoor
+    mesh1.position.z = POSZ * ( Math.random() - 0.5 ); //zCoor
 
-    scene.add(mesh1);
-  }
- 
-}
+scene.add(mesh1);
+
+    }
+
+
+
 
 function wrapText(context, text, x, y, maxWidth, lineHeight) {
   var words = text.split(' ');
@@ -293,8 +516,7 @@ function wrapText(context, text, x, y, maxWidth, lineHeight) {
 }
 
 
+</script>
 
- </script>
- 
 </body>
 </html>
