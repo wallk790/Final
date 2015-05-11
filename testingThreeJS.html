@@ -7,7 +7,9 @@
 <style>
 
 close {
-	position: absolute;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 
 }
 
@@ -20,11 +22,13 @@ close {
   <script src="js/OrbitControls.js"></script>
   <script src="js/GeometryUtils.js"></script>
 
-	<!-- load the font files -->
+  <!-- load the font files -->
 
-		<script src="fonts/gentilis_bold.typeface.js"></script>
-		<script src="fonts/gentilis_regular.typeface.js"></script>
-	
+    <script src="fonts/gentilis_bold.typeface.js"></script>
+    <script src="fonts/gentilis_regular.typeface.js"></script>
+
+    <script src="js/Detector.js"></script>
+  
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 
   <script>
@@ -34,24 +38,34 @@ close {
 
   var group, textMesh1, textMesh2, textGeo, material;
 
-//global variables 
-var raycaster = new THREE.Raycaster();
-var mouse = new THREE.Vector2(),
-offset = new THREE.Vector3(),
-INTERSECTED, SELECTED;
 
   init();
   animate();
   //createText();
-  //mainText();
-  onDocumentMouseMove();
+  mainText();
+  //onDocumentMouseMove();
+
+
+
+function mainText(){
+
+var words = '<div class=\"header\"<a id=\"close\" href="#">close<a/></div>';
+
+ var startingPoint = document.createElement('div');
+ startingPoint.innerHTML = words;
+ document.body.appendChild(startingPoint);
+
+ var elClose = document.getElementById('close'); 
+ elClose.addEventListener('click', createText, false);
+
+}
 
 
   // Sets up the scene.
   function init() {
 
-  	container = document.createElement( 'div' );
-	document.body.appendChild( container );
+    container = document.createElement( 'div' );
+  document.body.appendChild( container );
  
     // Create the scene and set the scene size.
     scene = new THREE.Scene();
@@ -101,121 +115,32 @@ INTERSECTED, SELECTED;
     controls.update();
   }
 
- function createText(event) {
+ function createText(v) {
 
 
   var material = new THREE.MeshPhongMaterial({
         color: 0xdddddd
-    });
+});
 
     var textGeom = new THREE.TextGeometry( 'Hello World!', {
         font: 'gentilis' // Must be lowercase!
     });
 
-    for ( var i = 0; i < 50; i ++ ) {
+    for ( var i = 0; i < 150; i ++ ) {
 
     var textMesh = new THREE.Mesh( textGeom, material );
 
-    textMesh.position.x = ( Math.random() - 0.5 );
-	textMesh.position.y = ( Math.random() - 0.5 );
-	textMesh.position.z = ( Math.random() - 0.5 );
-	textMesh.updateMatrix();
-	textMesh.matrixAutoUpdate = false;
+    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
+  textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
+  textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
+  textMesh.updateMatrix();
+  textMesh.matrixAutoUpdate = false;
 
     scene.add( textMesh );
   }
  
 }
 
-
-// function mainText() {
-//   var material = new THREE.MeshPhongMaterial({
-//         color: 0xdddddd
-//     });
-
-//     var textGeom = new THREE.TextGeometry( 'Click', {
-//         font: 'gentilis' // Must be lowercase!
-//     });
-
-
-//     var Click = new THREE.Mesh( textGeom, material );
-
-//     Click.name = "close";
-
-//     Click.position.x = ( Math.random() - 0.5 );
-// 	Click.position.y = ( Math.random() - 0.5 );
-// 	Click.position.z = ( Math.random() - 0.5 );
-// 	Click.updateMatrix();
-// 	Click.matrixAutoUpdate = false;
-
-//     scene.add( Click );
-
-
-// }
-
-
-
-//listening for click
-renderer.domElement.addEventListener( 'mousedown', onDocumentMouseMove, false );
-//click function			
-function onDocumentMouseMove (event) {
-
-	 var material = new THREE.MeshPhongMaterial({
-        color: 0xdddddd
-    });
-
-    var textGeom = new THREE.TextGeometry( 'Click', {
-        font: 'gentilis' // Must be lowercase!
-    });
-
-
-    var Click = new THREE.Mesh( textGeom, material );
-
-    Click.name = "close";
-
-    Click.position.x = ( Math.random() - 0.5 );
-	Click.position.y = ( Math.random() - 0.5 );
-	Click.position.z = ( Math.random() - 0.5 );
-	Click.updateMatrix();
-	Click.matrixAutoUpdate = false;
-
-    scene.add( Click );
-
-
-	event.preventDefault();
-
-	mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-	mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-	raycaster.setFromCamera( mouse, camera );
-	
-	var intersects = raycaster.intersectObjects( Click );
-
-	if ( intersects.Click ) {  //if clicked
-
-		if ( INTERSECTED != intersects.Click ) {
-
-			var vector = new THREE.Vector3( mouse.x, mouse.y, 0 ).unproject( camera );
-
-			document.body.style.cursor = 'pointer';
-			console.log('touch');
-			createText();
-
-		} else {
-			document.body.style.cursor = 'auto';
-
-		}
-	}
-}
-
- // var words = '<div class=\"header\"<a id=\"close\" href="#">close<a/></div>';
-
- // var startingPoint = document.createElement('div');
- // startingPoint.innerHTML = words;
- // document.body.appendChild(startingPoint);
-
- // var elClose = document.getElementById('close'); 
- // elClose.addEventListener('click', createText, false);
 
 
  
