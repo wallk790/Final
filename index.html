@@ -1,18 +1,18 @@
 <html>
 <head>
 
-  <style type="text/css">
+	<style type="text/css">
 
-  .myDiv {
-    position: absolute;
-      left: 0px;
-      top: 0px;
-      width: 100px;
-      height: 100px;
-      background: white;
-      color: black;
-  }
-  </style>
+	.myDiv {
+		position: absolute;
+    	left: 0px;
+    	top: 0px;
+    	width: 100px;
+    	height: 100px;
+    	background: white;
+    	color: black;
+	}
+	</style>
 
 </head> 
 
@@ -26,10 +26,10 @@
 <script src="js/OrbitControls.js"></script>
 <script src="js/GeometryUtils.js"></script>
 
-  <!-- load the font files -->
+	<!-- load the font files -->
 
-    <script src="fonts/gentilis_bold.typeface.js"></script>
-    <script src="fonts/gentilis_regular.typeface.js"></script>
+		<script src="fonts/gentilis_bold.typeface.js"></script>
+		<script src="fonts/gentilis_regular.typeface.js"></script>
 
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
 <!-- put script here to call to library -->
@@ -48,78 +48,76 @@ var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-o
 
 var articleURL = articles[0];
 for (var i = 0; i < articles.length; i++){
-  makeRequest(articles[0]);
+	makeRequest(articles[0]);
 }
 
 function makeRequest(url)
 {
-  $.ajax({
-    url: "http://127.0.0.1:1337/getData?url="+url,
-    type: "GET",
-    crossDomain: true,
-      dataType: 'jsonp',///was suggested to save as text so it's not already parsed ------ doesn't work becuase jsonp allows for cross domain requests which I need when working with node.js
-    success: function (response) {
-      // The request succeeded
-      //console.log(response);
-      console.log(response.results.comments);
-      console.log(response.results.comments.sentiment);
-      //findAlien(response);
-      //var test = handleJSON(response);
+	$.ajax({
+		url: "http://127.0.0.1:1337/getData?url="+url,
+		type: "GET",
+		crossDomain: true,
+	    dataType: 'jsonp',///was suggested to save as text so it's not already parsed ------ doesn't work becuase jsonp allows for cross domain requests which I need when working with node.js
+		success: function (response) {
+			// The request succeeded
+			//console.log(response);
+			console.log(response.results.comments);
+			console.log(response.results.comments.sentiment);
+			//findAlien(response);
+			//var test = handleJSON(response);
 
-      //call a div here and save text to a div :    
-      $(".myDiv").append(JSON.stringify(response));
+			//call a div here and save text to a div : 		
+			$(".myDiv").append(JSON.stringify(response));
 
-    },
-    error: function (xhr, status) {
-      // The request failed
-        console.log(status);
-    }
+		},
+		error: function (xhr, status) {
+			// The request failed
+	    	console.log(status);
+		}
 
-  });
+	});
 }
 
 
-    
+		
 // // handle JSON data from node backend
-// function handleJSON(data) {  
-//  for (var i = 0; i < data.results.comments.length; i++) {
-//  $(".myDiv").append("data.results.comments[i]");
-//  }
+// function handleJSON(data) {	
+// 	for (var i = 0; i < data.results.comments.length; i++) {
+// 	$(".myDiv").append("data.results.comments[i]");
+// 	}
 // }
 
 //{
-//  $.ajax({
-//    async: false;
-//    url: "http://127.0.0.1:1337/getData?url="+url,
-//    type: "GET",
-//    crossDomain: true,
-//      dataType: 'jsonp', ///look up options for text and save as text so it's not already parsed 
-//    success: function (response) {
-//      // The request succeeded
-//      //console.log(response);
-//      console.log(response.results.comments);
-//      console.log(response.results.comments.sentiment);
-//      //findAlien(response);
-//      handleJSON(response);
-// //call a div here and save text to a div     
+// 	$.ajax({
+// 		async: false;
+// 		url: "http://127.0.0.1:1337/getData?url="+url,
+// 		type: "GET",
+// 		crossDomain: true,
+// 	    dataType: 'jsonp', ///look up options for text and save as text so it's not already parsed 
+// 		success: function (response) {
+// 			// The request succeeded
+// 			//console.log(response);
+// 			console.log(response.results.comments);
+// 			console.log(response.results.comments.sentiment);
+// 			//findAlien(response);
+// 			handleJSON(response);
+// //call a div here and save text to a div 		
 //     console.log("The file was saved!");
 // });
-//      //drawText(response.results.comments); 
-//      //put data in div 
-//    },
-//    error: function (xhr, status) {
-//      // The request failed
-//        console.log(status);
-//    }
+// 			//drawText(response.results.comments); 
+// 			//put data in div 
+// 		},
+// 		error: function (xhr, status) {
+// 			// The request failed
+// 	    	console.log(status);
+// 		}
 
-//  });
+// 	});
 // }
 
 ///find out text from div into parse JSON into handle JSON and then through draw text draws 
 
-var myText = $(".myDiv").text();
-alert (myText); //just to verify it is there
-
+var myText = document.querySelector(".myDiv");
 
 init();
 animate();
@@ -129,41 +127,31 @@ handleJSON("myText");
 //drawText(); 
 
 
-function handleJSON(data) { 
-  
-  for (var i = 0; i < data.results.comments.length; i++) {
-      APItext = data.results.comments[i].commentBody;
-      drawText(APItext);
-  }
+function handleJSON(data) {	
+	
+	for (var i = 0; i < data.results.comments.length; i++) {
+  		APItext = data.results.comments[i].commentBody;
+  		drawText(APItext);
+	}
 
 }
 
 
-function drawText(inText){ //////TEXT WOULD SAVE HERE
+function drawText(inText){ 
 
-  // create a canvas element
-  var canvas1 = document.createElement('canvas');
-  var context1 = canvas2.getContext('2d');
-  context1.font = 'Bold 40px Arial';
-  context1.fillStyle = 'rgba(255,0,0,1.0)';
-  context1.fillText(inText);
-  // canvas contents will be used for a texture
-  var texture1 = new THREE.Texture(canvas2);
+	var textGeom = new THREE.TextGeometry(inText, {
+        font: 'gentilis' 
+    });
 
+    var textMesh = new THREE.Mesh( textGeom, material );
 
-  // var textGeom = new THREE.TextGeometry(inText, {
- //        font: 'gentilis' 
- //    });
+    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
+	textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
+	textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
+	textMesh.updateMatrix();
+	textMesh.matrixAutoUpdate = false;
 
- //    var textMesh = new THREE.Mesh( textGeom, material );
-
- //    textMesh.position.x = ( Math.random() - 0.5 ) * 5000;
-  // textMesh.position.y = ( Math.random() - 0.5 ) * 5000;
-  // textMesh.position.z = ( Math.random() - 0.5 ) * 5000;
-  // textMesh.updateMatrix();
-  // textMesh.matrixAutoUpdate = false;
-
- //    scene.add( textMesh );
+    scene.add( textMesh );
 
 }
 
@@ -171,8 +159,8 @@ function drawText(inText){ //////TEXT WOULD SAVE HERE
 // Sets up the scene.
 function init() {
 
-    container = document.createElement( 'div' );
-  document.body.appendChild( container );
+  	container = document.createElement( 'div' );
+	document.body.appendChild( container );
  
     // Create the scene and set the scene size.
     scene = new THREE.Scene();
@@ -233,15 +221,15 @@ function init() {
 //finding word alien 
 // function findAlien(data) {
 
-  // for (var i = 0; i < data.results.comments.length; i++) {
-  //  var str = data.results.comments[i].commentBody;
-  //  var n = str.indexOf("alien");
-  //  console.log(n);
+	// for (var i = 0; i < data.results.comments.length; i++) {
+	// 	var str = data.results.comments[i].commentBody;
+	// 	var n = str.indexOf("alien");
+	// 	console.log(n);
 
-  //  if (n > -1 ) {
-  //      $(".text").append("<p>" + str + "</p>");
-  //  }
-  // }
+	// 	if (n > -1 ) {
+	//  		$(".text").append("<p>" + str + "</p>");
+	// 	}
+	// }
 // }
 
 
@@ -250,22 +238,22 @@ $.getJSON('timesOut1.json', function(data) {
     // loop through each comment
  
 
-      for (var i = 0; i < data.results.comments.length; i++) {
-        // get the comment body
-        var comment = data.results.comments[i].commentBody;
-        console.log(comment); 
+			for (var i = 0; i < data.results.comments.length; i++) {
+				// get the comment body
+				var comment = data.results.comments[i].commentBody;
+				console.log(comment);	
 
-      }
+			}
 
-            var container = document.querySelector('text');
+						var container = document.querySelector('text');
 
-      var paragraph = document.createElement('p');
-      paragraph.setAttribute("class", "text");
-      paragraph.innerHTML = "these are comments" + comment;
+			var paragraph = document.createElement('p');
+			paragraph.setAttribute("class", "text");
+			paragraph.innerHTML = "these are comments" + comment;
 
-      paragraph.appendChild(container);
-        
-        // do sentiment analysis
+			paragraph.appendChild(container);
+				
+				// do sentiment analysis
 });
 */
 
