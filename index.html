@@ -1,58 +1,98 @@
 <html>
 <head>
 
-</head>
+</head> 
+
 <body>
+
+<div class="text"> </div>
+
 <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<!-- put script here to call to library -->
+
+
 <script>
-	// example url 
-	// UNTESTED Sentiment example https://github.com/thisandagain/sentiment
-	// 5a201de4998d3b4049fd577cce90db66:1:71926099
-	var baseurl = "http://api.nytimes.com/svc/community/v3/user-content/url.json?api-key="
-	var apikey  = "5a201de4998d3b4049fd577cce90db66:1:71926099";
-	var articleurl = "http://www.nytimes.com/2015/03/18/opinion/a-way-out-on-immigration-reform.html";
-	var apiurl = baseurl + apikey + "&url=" + articleurl;
-	console.log(apiurl);
-	// get json
-	//var json = gotSomeJSONFromSomewhere; // do ajax request here or load json locally
 
-	function( data ) { ///use xml httprequest 
-		console.log(data);
-		// loop through each comment`
+/*
+	To get backend running: 
+	1. Open Terminal.
+	2. "cd" to the directory with your node app.
+	3. run "node app.js"
+*/
+
+// nytimes articles
+var articles = ["http://www.nytimes.com/2015/03/29/magazine/debunking-the-myth-of-the-job-stealing-immigrant.html"];
+
+var articleURL = articles[0];
+
+$.ajax({
+	url: "http://127.0.0.1:1337/getData?url="+articleURL,
+	type: "GET",
+	crossDomain: true,
+    dataType: 'jsonp',
+	success: function (response) {
+		// The request succeeded
+		//console.log(response);
+		//console.log(response.results.comments);
+		//console.log(response.results.comments.sentiment);
+		findAlien(response);
+		handleJSON(response);
+	},
+	error: function (xhr, status) {
+		// The request failed
+    	console.log(status);
+	}
+
+});
+
+// handle JSON data from node backend
+function handleJSON(data) {	
 		for (var i = 0; i < data.results.comments.length; i++) {
-			// get the comment body
-			var comment = data.results.comments[i].commentBody;
-			console.log(comment);	
-			// do sentiment analysis
-
+		$(".text").append("<p>" + data.results.comments[i].commentBody + "</p>");
+		$(".text").append("<p>" + data.results.comments.sentiment + "</p>");
 		}
-	});
-///
-//put this in another function and call it where you had your jQuery
-//the asycononous part being false lets this load in the background so it doens't stop your program
 
-var oReq = new XMLHttpRequest();
-oReq.onload = reqListener;
-oReq.open("get", apiurl, true);
-oReq.send();
+}
 
-	//
+//finding word alien 
+function findAlien(data) {
 
-	// // node code 
-	// var sentiment = require('sentiment');
+	// for (var i = 0; i < data.results.comments.length; i++) {
+	// 	var str = data.results.comments[i].commentBody;
+	// 	var n = str.indexOf("alien");
+	// 	console.log(n);
 
-	// var r1 = sentiment(firstComment);
-
-	// if ( r1 > 0 ) {
-	// 	console.log("Good");
+	// 	if (n > -1 ) {
+	//  		$(".text").append("<p>" + str + "</p>");
+	// 	}
 	// }
-	// else {
-	// 	console.log("Bad");	
-	// }
-	// console.dir(r1);        // Score: -2, Comparative: -0.666
+}
 
-	// var r2 = sentiment('Cats are totally amazing!');
-	// console.dir(r2);        // Score: 4, Comparative: 1
+
+/*
+$.getJSON('timesOut1.json', function(data) {
+    // loop through each comment
+ 
+
+			for (var i = 0; i < data.results.comments.length; i++) {
+				// get the comment body
+				var comment = data.results.comments[i].commentBody;
+				console.log(comment);	
+
+			}
+
+						var container = document.querySelector('text');
+
+			var paragraph = document.createElement('p');
+			paragraph.setAttribute("class", "text");
+			paragraph.innerHTML = "these are comments" + comment;
+
+			paragraph.appendChild(container);
+				
+				// do sentiment analysis
+});
+*/
+
 </script>
 
 </body>
