@@ -15,7 +15,7 @@
 <script src="js/three.min.js"></script>
 <script src="js/OrbitControls.js"></script>
 <script src="js/GeometryUtils.js"></script>
-<script src="js/Stats.js"></script>
+<!-- <script src="js/Stats.js"></script> -->
 
   <!-- load the font files -->
 
@@ -38,19 +38,19 @@ var targetList = [];
 var objectList = [];
 var projector, mouse = { x: 0, y: 0 };
 
-var stats = new Stats();
+//var stats = new Stats();
 
 var serverData = [];
 
 var filterType = ["Undocumented","Alien","Illegal","Work"];
-stats.setMode(0); // 0: fps, 1: ms
+//stats.setMode(0); // 0: fps, 1: ms
 
 // align top-left
-stats.domElement.style.position = 'absolute';
-stats.domElement.style.left = '0px';
-stats.domElement.style.top = '0px';
+// stats.domElement.style.position = 'absolute';
+// stats.domElement.style.left = '0px';
+// stats.domElement.style.top = '0px';
 
-document.body.appendChild( stats.domElement );
+//document.body.appendChild( stats.domElement );
 
 init();
 animate();
@@ -65,29 +65,8 @@ var isTrimmed = true;
 
 var articleURL = articles[0];
 
-// var xCoor; 
-// var yCoor;
-// var zCoor;
-
-// var alienX; 
-// var alienY;
-// var alienZ;
 
 var cameraPosition;
-
-
-// var illegalX = 900; 
-// var illegalY = 0;
-// var illegalZ = 500;
-
-
-// var workX = 1000; 
-// var workY = 0;
-// var workZ = -500;
-
-// var undocumentedX = -900; 
-// var undocumentedY = 0;
-// var undocumentedZ = -500;
 
 
 
@@ -104,11 +83,11 @@ function makeRequest(url)
       dataType: 'jsonp',///was suggested to save as text so it's not already parsed ------ doesn't work becuase jsonp allows for cross domain requests which I need when working with node.js
     success: function (response) {
       // The request succeeded
-      //console.log(response);
+    //console.log(response);
       // console.log(response.results.comments);
       // console.log(response.results.comments.sentiment);
       //findAlien(response);
-      //var test = handleJSON(response);
+      //var test = handleJSON(response);  
 
       serverData.push(response);
       // console.log(serverData);
@@ -151,36 +130,64 @@ function handleJSON(filter) {
   //      $(".text").append("<p>" + str + "</p>");
   //  }
 
- var increase = -1000;
+console.log(sentimentValue);
+ var increase = 1000;
+ var decrease = -1000;
 
         if (filter == "alien" && APItext.includes('illegal')) {
           for (var i = 0; i < data.results.comments.length; i++) {
+
+            if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, -800, increase, 500, sentimentValue/10);
+            createText(APItext, -800, increase, 500);
+            } 
+
+            if (sentimentValue < 0) {
+              decrease -= 100;
+            createText(APItext, -900, decrease, 500);
+            }
+            
         }
       }
 
         if (filter == "illegal" && APItext.includes('work')) {
           for (var i = 0; i < data.results.comments.length; i++) {
+            if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, -2000, increase, 500, sentimentValue/10);
+            createText(APItext, -2400, increase, 500); 
+          } 
+            if (sentimentValue < 0) {
+              decrease -= 100;
+            createText(APItext, -2400, decrease, 500);
+            }
         }
       }
 
         if (filter == "undocumented" && APItext.includes('undocumented')) {
           for (var i = 0; i < data.results.comments.length; i++) {
+            if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, 550, increase, 500, sentimentValue/10);
+            createText(APItext, 550, increase, 500);
+            } 
+            if (sentimentValue < 0) {
+              decrease -=100;
+              createText(APItext, 550, decrease, 500);
         }
       }
-
+}
         if (filter == "work" && APItext.includes('alien')) {
          for (var i = 0; i < data.results.comments.length; i++) {
+          if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, 2000, increase, 500, sentimentValue/10);
+            createText(APItext, 3000, increase, 500);
+            } 
+          if (sentimentValue < 0) {
+            decrease -=100;
+            createText(APItext, 3000, decrease, 500);  
         }
-     } 
-      
+  }
+}
+
 
 
       //var increase = -500;
@@ -326,33 +333,34 @@ container = document.createElement( 'div' );
     });
 
     var textGeom = new THREE.TextGeometry( filterType[0], {
-        size: 150,
-        height: 75,
+        size: 200,
+        //height: 75,
         font: 'gentilis', // Must be lowercase!
     });
 
     var textGeom1 = new THREE.TextGeometry( filterType[1], {
-      size: 150,
-        height: 75,
+      size: 200,
+        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
  
   var textGeom2 = new THREE.TextGeometry( filterType[2], {
-    size: 150,
-        height: 75,
+    size: 200,
+        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
     var textGeom3 = new THREE.TextGeometry( filterType[3], {
-      size: 150,
-        height: 75,
+      size: 200,
+        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
   var Undocumented = new THREE.Mesh( textGeom, material );
 
  Undocumented.position.x = 250;
- Undocumented.position.y = -2500;
+ // Undocumented.position.y = -2500;
+ Undocumented.position.y = 0;
  Undocumented.position.z = -500;
 
  Undocumented.name = "Undocumented";
@@ -367,7 +375,8 @@ container = document.createElement( 'div' );
   var Work = new THREE.Mesh( textGeom1, material );
 
  Work.position.x = 2400;
- Work.position.y = -2500;
+ // Work.position.y = -2500;
+ Undocumented.position.y = 0;
  Work.position.z = -500;
  Work.name = "Work";
  Work.updateMatrix();
@@ -380,8 +389,9 @@ container = document.createElement( 'div' );
 
  var Alien = new THREE.Mesh( textGeom2, material );
 
- Alien.position.x = -1000;
- Alien.position.y = -2500;
+ Alien.position.x = -1300;
+ // Alien.position.y = -2500;
+ Undocumented.position.y = 0;
  Alien.position.z = -500;
  Alien.name = "Alien";
  Alien.updateMatrix();
@@ -395,7 +405,8 @@ container = document.createElement( 'div' );
  var Illegals = new THREE.Mesh( textGeom3, material );
 
  Illegals.position.x = -2800;
- Illegals.position.y = -2500;
+ // Illegals.position.y = -2500;
+ Undocumented.position.y = 0;
  Illegals.position.z = -500;
  Illegals.name = "Illegal";
  Illegals.updateMatrix();
@@ -505,14 +516,14 @@ function render()
 
 
 
- function createText(v, POSX, POSY, POSZ, sentimentPos) {
+ function createText(v, POSX, POSY, POSZ) {
 
    var v;
 
     // create a canvas element
     var canvas1 = document.createElement('canvas');
     canvas1.width = 500;
-    canvas1.height = 1500;
+    canvas1.height = 1000;
     var context1 = canvas1.getContext('2d');
     context1.font = 'Bold 24px Arial';
     //context1.fillStyle = 'rgba(200, 200, 200,1.0)';
@@ -535,7 +546,7 @@ function render()
 
     mesh1.position.x = POSX; //xCoor
     mesh1.position.y = POSY; //yCoor
-    mesh1.position.z = POSZ * (sentimentPos); //zCoor
+    mesh1.position.z = POSZ * Math.floor((Math.random() * -10) + .5); //zCoor
 
 scene.add(mesh1);
 
