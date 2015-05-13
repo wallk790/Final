@@ -27,16 +27,28 @@ app.get("/getData", function(req, response){
 	// Reuqests the NYTimes data
 	request('http://api.nytimes.com/svc/community/v3/user-content/url.json?api-key=5a201de4998d3b4049fd577cce90db66:1:71926099&url='+url, function (error, res, data) {
 		if (!error && res.statusCode == 200) {
+
+
 			data = JSON.parse(data);
 
 			// iterate over each comment
 			for (var i = 0; i < data.results.comments.length; i++) {
 
+// // check the sentiment of the comment
+				var result = sentiment(body, {
+    			'illegal': 500,
+    			'alien': -500,
+    			'steal': -500,
+    			'criminals': -500,
+    			'burden': -500,
+    			'illegals': -500,
+				});
+
 				// get the comment body
 				var comment = data.results.comments[i];
 				var body = comment.commentBody;
 
-				// check the sentiment of the comment
+
 				var s = sentiment(body);
 				comment["sentiment"] = s;
 			}

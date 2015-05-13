@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <style type="text/css">
+	<style type="text/css">
 
-  </style>
+	</style>
 
 </head> 
 
@@ -17,10 +17,10 @@
 <script src="js/GeometryUtils.js"></script>
 <!-- <script src="js/Stats.js"></script> -->
 
-  <!-- load the font files -->
+	<!-- load the font files -->
 
-    <script src="fonts/gentilis_bold.typeface.js"></script>
-    <script src="fonts/gentilis_regular.typeface.js"></script>
+		<script src="fonts/gentilis_bold.typeface.js"></script>
+		<script src="fonts/gentilis_regular.typeface.js"></script>
 
 <script src="js/Detector.js"></script>
 
@@ -33,24 +33,14 @@ var scene, camera, renderer;
 
 var group, textMesh1, textMesh2, textGeo, material;
 
-// custom global variables
 var targetList = [];
 var objectList = [];
 var projector, mouse = { x: 0, y: 0 };
 
-//var stats = new Stats();
 
 var serverData = [];
 
 var filterType = ["Undocumented","Alien","Illegal","Work"];
-//stats.setMode(0); // 0: fps, 1: ms
-
-// align top-left
-// stats.domElement.style.position = 'absolute';
-// stats.domElement.style.left = '0px';
-// stats.domElement.style.top = '0px';
-
-//document.body.appendChild( stats.domElement );
 
 init();
 animate();
@@ -71,64 +61,42 @@ var cameraPosition;
 
 
 for (var i = 0; i < articles.length; i++){
-  makeRequest(articles[i]);
+	makeRequest(articles[i]);
 }
 
 function makeRequest(url)
 {
-  $.ajax({
-    url: "http://127.0.0.1:1337/getData?url="+url,
-    type: "GET",
-    crossDomain: true,
-      dataType: 'jsonp',///was suggested to save as text so it's not already parsed ------ doesn't work becuase jsonp allows for cross domain requests which I need when working with node.js
-    success: function (response) {
-      // The request succeeded
-    //console.log(response);
-      // console.log(response.results.comments);
-      // console.log(response.results.comments.sentiment);
-      //findAlien(response);
-      //var test = handleJSON(response);  
+	$.ajax({
+		url: "http://127.0.0.1:1337/getData?url="+url,
+		type: "GET",
+		crossDomain: true,
+	    dataType: 'jsonp',
+		success: function (response) {
+		
 
-      serverData.push(response);
-      // console.log(serverData);
-      //handleJSON(response);
-      //call a div here and save text to a div :    
-      //$(".myDiv").append(JSON.stringify(response));
-    },
-    error: function (xhr, status) {
-      // The request failed
-        // console.log(status);
-    }
+			serverData.push(response);
+			
+		},
+		error: function (xhr, status) {
+		
+		}
 
-  });
+	});
 }
 
 
-function handleJSON(filter) { 
+function handleJSON(filter) {	
           
 
-  for (var i = 0; i < serverData.length; i++){
-    // the json for an individual article
-    var data = serverData[i];
-    
-    for (var j = 0; j < data.results.comments.length; j++) {
-        var APItext = data.results.comments[j].commentBody;
+	for (var i = 0; i < serverData.length; i++){
+		// the json for an individual article
+		var data = serverData[i];
+		
+		for (var j = 0; j < data.results.comments.length; j++) {
+	  		var APItext = data.results.comments[j].commentBody;
 
-      var sentimentValue = data.results.comments[j].sentiment.score;
+			var sentimentValue = data.results.comments[j].sentiment.score;
 
-
-
-      //var n = APItext.indexOf(filterType);
-      // console.log(filter);
-
-      // for (var i = 0; i < data.results.comments.length; i++) {
-  //  var str = data.results.comments[i].commentBody;
-  //  var n = str.indexOf("alien");
-  //  console.log(n);
-
-  //  if (n > -1 ) {
-  //      $(".text").append("<p>" + str + "</p>");
-  //  }
 
 console.log(sentimentValue);
  var increase = 1000;
@@ -188,64 +156,16 @@ console.log(sentimentValue);
   }
 }
 
+			}
 
+		}
+	}
 
-      //var increase = -500;
-
-        //console.log(APItext);
-
-     //for (var k = 0; k < 50; k++) {
-
-     //  var n = APItext.indexOf("Alien");
-
-        // if (n > -1 ) {
-     //      createText(APItext, 0, 0, 500 );
-     //   }
-     //  }
-
-          // if (filter == "alien") {
-          //   for (var i = 0; i < 50; i++) {
-          //      increase += 1000;
-          //      createText(APItext, -650, increase, -500 ); /// put parameter in create text 
-          //   }
-          // }
-
-          //  if (filter == "illegal") {
-          //    for (var i = 0; i < 50; i++) {
-          //      increase += 1000;
-          //     // objectList.push(APItext);
-          //      createText(APItext, -1300, increase, -500 ); /// put parameter in create text 
-          //   }
-          // }
-
-          //  if (filter == "undocumented") {
-          //     for (var i = 0; i < 50; i++) {
-          //      increase += 3000;
-          //      //objectList.push(APItext);
-          //      createText(APItext, 250, increase, -500 ); /// put parameter in create text 
-          //   }
-          // }
-
-          //  if (filter == "work") {
-          //     for (var i = 0; i < 50; i++) {
-          //      increase += 1000;
-          //      //objectList.push(APItext);
-          //      createText(APItext, 1400, increase, -500 ); /// put parameter in create text 
-          //   }
-          // }
-        
-          //createText(APItext, ); /// put parameter in create text 
-        
-      }
-
-    }
-  }
-//}
 
  // Sets up the scene.
   function init() {
 container = document.createElement( 'div' );
-  document.body.appendChild( container );
+	document.body.appendChild( container );
  
     // Create the scene and set the scene size.
     scene = new THREE.Scene();
@@ -297,12 +217,6 @@ container = document.createElement( 'div' );
     document.body.appendChild(renderer.domElement);
     renderer.setClearColor( scene.fog.color );
 
-
-    // camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
-    //     camera.position.x = 0;
-    //     camera.position.y = 0;
-    //     camera.position.z = 500;
-
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 30000 );
 
       camera.position.x = 0; 
@@ -325,8 +239,6 @@ container = document.createElement( 'div' );
  // Add OrbitControls so that we can pan around with the mouse.
     controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-    //////////////////////////////////////////////////////////////////////
-
   // this material causes a mesh to use colors assigned to faces
  var material = new THREE.MeshPhongMaterial({
         color: 0xdddddd
@@ -334,25 +246,21 @@ container = document.createElement( 'div' );
 
     var textGeom = new THREE.TextGeometry( filterType[0], {
         size: 200,
-        //height: 75,
         font: 'gentilis', // Must be lowercase!
     });
 
     var textGeom1 = new THREE.TextGeometry( filterType[1], {
       size: 200,
-        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
  
-  var textGeom2 = new THREE.TextGeometry( filterType[2], {
+ 	var textGeom2 = new THREE.TextGeometry( filterType[2], {
     size: 200,
-        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
     var textGeom3 = new THREE.TextGeometry( filterType[3], {
       size: 200,
-        //height: 75,
         font: 'gentilis' // Must be lowercase!
     });
 
@@ -390,7 +298,6 @@ container = document.createElement( 'div' );
  var Alien = new THREE.Mesh( textGeom2, material );
 
  Alien.position.x = -1300;
- // Alien.position.y = -2500;
  Undocumented.position.y = 0;
  Alien.position.z = -500;
  Alien.name = "Alien";
@@ -405,7 +312,6 @@ container = document.createElement( 'div' );
  var Illegals = new THREE.Mesh( textGeom3, material );
 
  Illegals.position.x = -2800;
- // Illegals.position.y = -2500;
  Undocumented.position.y = 0;
  Illegals.position.z = -500;
  Illegals.name = "Illegal";
@@ -415,7 +321,6 @@ container = document.createElement( 'div' );
     scene.add(Illegals);
   
   targetList.push(Illegals);
-  //////////////////////////////////////////////////////////////////////
   
   // initialize object to perform world/screen calculations
   projector = new THREE.Projector();
@@ -436,7 +341,6 @@ container = document.createElement( 'div' );
 
     console.log(camera);
     var pos = new THREE.Vector3(x, y, z);
-    // camera.up = new THREE.Vector3(0,0,1);
     camera.lookAt(pos);
   }
 
@@ -464,12 +368,10 @@ container = document.createElement( 'div' );
   // if there is one (or more) intersections
   if ( intersects.length > 0 )
   {
-    console.log(intersects);
+  	console.log(intersects);
     console.log("Hit @ " + toString( intersects[0].point ) );
-    // may throw error if undefined
     var filterText = intersects[0].object.name.toLowerCase();
     // console.log(filterText);
-    // change the color of the closest face.
 
     handleJSON(filterText); 
 
@@ -485,9 +387,6 @@ container = document.createElement( 'div' );
  posCamera (objectPos.x, objectPos.y, objectPos.z - 100);
  lookAtCamera(objectPos.x, objectPos.y, objectPos.z);
 
-  // } else {
-  //  //camera (camXa, camYa, camZa);
-  // camera (500, 0, 0);
 
    }
 }
@@ -518,7 +417,7 @@ function render()
 
  function createText(v, POSX, POSY, POSZ) {
 
-   var v;
+	 var v;
 
     // create a canvas element
     var canvas1 = document.createElement('canvas');
