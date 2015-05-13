@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<style type="text/css">
+  <style type="text/css">
 
-	</style>
+  </style>
 
 </head> 
 
@@ -17,10 +17,10 @@
 <script src="js/GeometryUtils.js"></script>
 <!-- <script src="js/Stats.js"></script> -->
 
-	<!-- load the font files -->
+  <!-- load the font files -->
 
-		<script src="fonts/gentilis_bold.typeface.js"></script>
-		<script src="fonts/gentilis_regular.typeface.js"></script>
+    <script src="fonts/gentilis_bold.typeface.js"></script>
+    <script src="fonts/gentilis_regular.typeface.js"></script>
 
 <script src="js/Detector.js"></script>
 
@@ -61,41 +61,41 @@ var cameraPosition;
 
 
 for (var i = 0; i < articles.length; i++){
-	makeRequest(articles[i]);
+  makeRequest(articles[i]);
 }
 
 function makeRequest(url)
 {
-	$.ajax({
-		url: "http://127.0.0.1:1337/getData?url="+url,
-		type: "GET",
-		crossDomain: true,
-	    dataType: 'jsonp',
-		success: function (response) {
-		
+  $.ajax({
+    url: "http://127.0.0.1:1337/getData?url="+url,
+    type: "GET",
+    crossDomain: true,
+      dataType: 'jsonp',
+    success: function (response) {
+    
 
-			serverData.push(response);
-			
-		},
-		error: function (xhr, status) {
-		
-		}
+      serverData.push(response);
+      
+    },
+    error: function (xhr, status) {
+    
+    }
 
-	});
+  });
 }
 
 
-function handleJSON(filter) {	
+function handleJSON(filter) { 
           
 
-	for (var i = 0; i < serverData.length; i++){
-		// the json for an individual article
-		var data = serverData[i];
-		
-		for (var j = 0; j < data.results.comments.length; j++) {
-	  		var APItext = data.results.comments[j].commentBody;
+  for (var i = 0; i < serverData.length; i++){
+    // the json for an individual article
+    var data = serverData[i];
+    
+    for (var j = 0; j < data.results.comments.length; j++) {
+        var APItext = data.results.comments[j].commentBody;
 
-			var sentimentValue = data.results.comments[j].sentiment.score;
+      var sentimentValue = data.results.comments[j].sentiment.score;
 
 
 console.log(sentimentValue);
@@ -107,12 +107,12 @@ console.log(sentimentValue);
 
             if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, -800, increase, 500);
+            createText(APItext, -800, increase, 500, sentimentValue/10);
             } 
 
             if (sentimentValue < 0) {
               decrease -= 100;
-            createText(APItext, -900, decrease, 500);
+            createText(APItext, -900, decrease, 500, sentimentValue/10);
             }
             
         }
@@ -122,11 +122,11 @@ console.log(sentimentValue);
           for (var i = 0; i < data.results.comments.length; i++) {
             if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, -2400, increase, 500); 
+            createText(APItext, -2400, increase, 500, sentimentValue/10); 
           } 
             if (sentimentValue < 0) {
               decrease -= 100;
-            createText(APItext, -2400, decrease, 500);
+            createText(APItext, -2400, decrease, 500, sentimentValue/10);
             }
         }
       }
@@ -135,11 +135,11 @@ console.log(sentimentValue);
           for (var i = 0; i < data.results.comments.length; i++) {
             if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, 550, increase, 500);
+            createText(APItext, 550, increase, 500, sentimentValue/10);
             } 
             if (sentimentValue < 0) {
               decrease -=100;
-              createText(APItext, 550, decrease, 500);
+              createText(APItext, 550, decrease, 500, sentimentValue/10);
         }
       }
 }
@@ -147,25 +147,25 @@ console.log(sentimentValue);
          for (var i = 0; i < data.results.comments.length; i++) {
           if (sentimentValue > 0) {
             increase += 100;
-            createText(APItext, 3000, increase, 500);
+            createText(APItext, 3000, increase, 500, sentimentValue/10);
             } 
           if (sentimentValue < 0) {
             decrease -=100;
-            createText(APItext, 3000, decrease, 500);  
+            createText(APItext, 3000, decrease, 500, sentimentValue/10);  
         }
   }
 }
 
-			}
+      }
 
-		}
-	}
+    }
+  }
 
 
  // Sets up the scene.
   function init() {
 container = document.createElement( 'div' );
-	document.body.appendChild( container );
+  document.body.appendChild( container );
  
     // Create the scene and set the scene size.
     scene = new THREE.Scene();
@@ -188,7 +188,7 @@ container = document.createElement( 'div' );
         dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
         dirLight.color.setHSL( 0.1, 1, 0.95 );
         dirLight.position.set( -1, 1.75, 1 );
-        dirLight.position.multiplyScalar( 50 );
+        dirLight.position.multiplyScalar( 50 );//
         scene.add( dirLight );
 
         dirLight.castShadow = true;
@@ -254,7 +254,7 @@ container = document.createElement( 'div' );
         font: 'gentilis' // Must be lowercase!
     });
  
- 	var textGeom2 = new THREE.TextGeometry( filterType[2], {
+  var textGeom2 = new THREE.TextGeometry( filterType[2], {
     size: 200,
         font: 'gentilis' // Must be lowercase!
     });
@@ -368,7 +368,7 @@ container = document.createElement( 'div' );
   // if there is one (or more) intersections
   if ( intersects.length > 0 )
   {
-  	console.log(intersects);
+    console.log(intersects);
     console.log("Hit @ " + toString( intersects[0].point ) );
     var filterText = intersects[0].object.name.toLowerCase();
     // console.log(filterText);
@@ -415,14 +415,14 @@ function render()
 
 
 
- function createText(v, POSX, POSY, POSZ) {
+ function createText(v, POSX, POSY, POSZ, sentimentPos) {
 
-	 var v;
+   var v;
 
     // create a canvas element
     var canvas1 = document.createElement('canvas');
     canvas1.width = 500;
-    canvas1.height = 1000;
+    canvas1.height = 100;
     var context1 = canvas1.getContext('2d');
     context1.font = 'Bold 24px Arial';
     //context1.fillStyle = 'rgba(200, 200, 200,1.0)';
@@ -445,7 +445,7 @@ function render()
 
     mesh1.position.x = POSX; //xCoor
     mesh1.position.y = POSY; //yCoor
-    mesh1.position.z = POSZ * Math.floor((Math.random() * -10) + .5); //zCoor
+    mesh1.position.z = POSZ * (sentimentPos);///Math.floor((Math.random() * -10) + .5); //zCoor
 
 scene.add(mesh1);
 
