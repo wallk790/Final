@@ -72,8 +72,6 @@ function makeRequest(url)
     crossDomain: true,
       dataType: 'jsonp',
     success: function (response) {
-    
-
       serverData.push(response);
       
     },
@@ -173,7 +171,9 @@ container = document.createElement( 'div' );
         HEIGHT = window.innerHeight;
 
     scene = new THREE.Scene();
-    scene.fog = new THREE.FogExp2( 0xcccccc, 0.000001 );
+
+// code from three.js orbit controls example
+//http://threejs.org/examples/#misc_controls_orbit 
 
 // LIGHTS
 
@@ -238,6 +238,9 @@ container = document.createElement( 'div' );
  
  // Add OrbitControls so that we can pan around with the mouse.
     controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+//code from: geometry text example 
+//http://threejs.org/examples/webgl_geometry_text.html
 
   // this material causes a mesh to use colors assigned to faces
  var material = new THREE.MeshPhongMaterial({
@@ -345,6 +348,8 @@ container = document.createElement( 'div' );
   }
 
 
+//code written with assistance from Sean Hughes and Justin Blinder
+
   function onDocumentMouseDown( event ) 
 {
   
@@ -414,6 +419,8 @@ function render()
 }
 
 
+
+//code from: https://gist.github.com/ekeneijeoma/1186920
 
  function createText(v, POSX, POSY, POSZ, sentimentPos) {
 

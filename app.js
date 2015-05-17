@@ -31,6 +31,8 @@ app.get("/getData", function(req, response){
 
 			data = JSON.parse(data);
 
+//library from: https://github.com/thisandagain/sentiment
+
 			// iterate over each comment
 			for (var i = 0; i < data.results.comments.length; i++) {
 
